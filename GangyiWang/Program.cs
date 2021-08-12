@@ -10,7 +10,7 @@ namespace GangyiWang
         {
             var img = new Mat("TassenTest.png", ImreadModes.Grayscale);
 
-            var contourImage = img.Canny(60, 120).MorphologicalThinning();
+            var contourImage = img.Canny(60, 120).GuoHallThinning();
             
             Cv2.ImShow("Contours", contourImage);
             Cv2.ImShow("Original", img);

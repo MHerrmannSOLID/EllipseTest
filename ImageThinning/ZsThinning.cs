@@ -77,17 +77,6 @@ namespace GangyiWang
             return test1 && test2 && test3 && test4;
         }
 
-        private void CalcSets(bool[] kernel,out int a, out int B)
-        {
-            a = 0;
-            B = 0;
-            for (int i = 0; i < kernel.Length - 1; i++)
-            {
-                a += (!kernel[i] && kernel[i + 1]) ? 1 : 0;
-                B += (kernel[i]) ? 1 : 0;
-            }
-        }
-
         private int CalcA(bool[] kernel)
         {
             var a = 0;

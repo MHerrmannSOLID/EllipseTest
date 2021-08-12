@@ -10,9 +10,15 @@ namespace ImageThinning
     {
 
         public static Mat MorphologicalThinning(this Mat original)
-            => ImageThinning.MorphologicalThinning.PerformOn(original);
+            => ImageThinning.MorphologicalThinning.PerformOn(original.Threshold(20, 255, ThresholdTypes.Binary));
 
         public static Mat ZhangSuenThinning(this Mat original)
-            => ZsThinning.PerformOn(original);
+            => ZsThinning.PerformOn(original.Threshold(20, 255, ThresholdTypes.Binary));
+
+
+        public static Mat GuoHallThinning(this Mat original)
+            => GhThinning.PerformOn(original.Threshold(20, 255, ThresholdTypes.Binary));
+
+
     }
 }
