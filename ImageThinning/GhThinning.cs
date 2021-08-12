@@ -103,8 +103,9 @@ namespace ImageThinning
         }.CountTrueConditions();
 
 
-        // Let C(P) be the number of distinct 8 - connected components of 1's in Ps 8-neighborhood.
-        // Since this is a bit hard to understand, I searched for a better explanation and found it in 
+        // --> Let C(P) be the number of distinct 8 - connected components of 1's in Ps 8-neighborhood. <---
+        //
+        // Since this is a bit hard to understand, I searched for a better explanation and found it in: 
         // "Thinning algorithms comparison for vectorization of engineering drawings" on page 3
         //https://www.researchgate.net/publication/316476002_Comparison_of_thinning_algorithms_for_vectorization_of_engineering_drawings/link/590848f60f7e9bc0d59ae365/download
         private static int CalcC(bool[] kernel)
