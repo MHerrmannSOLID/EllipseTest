@@ -11,7 +11,7 @@ namespace GangyiWang
         static void Main(string[] args)
         {
             var testImages = new[] {"TassenTest.png", "rivets.png", "seats.jpg", "simple.jpg"};
-            var img = new Mat(testImages[3], ImreadModes.Grayscale);
+            var img = new Mat(testImages[0], ImreadModes.Grayscale);
 
 
             var gwe = new GangyiWangEllipse(img)
@@ -44,13 +44,11 @@ namespace GangyiWang
             Morphological = 2,
         }
 
-        private Func<Mat, Mat>[] _thinningFunctions = new[]
-        {
-            new Func<Mat, Mat>((inoutImg) => inoutImg.GuoHallThinning()),
-            new Func<Mat, Mat>((inoutImg) => inoutImg.ZhangSuenThinning()),
-            new Func<Mat, Mat>((inoutImg) => inoutImg.MorphologicalThinning()),
+        private readonly Func<Mat, Mat>[] _thinningFunctions = {
+            (inoutImg) => inoutImg.GuoHallThinning(),
+            (inoutImg) => inoutImg.ZhangSuenThinning(),
+            (inoutImg) => inoutImg.MorphologicalThinning(),
         };
-
 
         public GangyiWangEllipse(Mat original)
         {

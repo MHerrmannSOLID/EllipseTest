@@ -26,7 +26,6 @@ namespace GangyiWang
             _contourImage = contourImg.Clone();
         }
 
-
         private void ExtractStrips()
         {
             var strips = new List<Point[]>();

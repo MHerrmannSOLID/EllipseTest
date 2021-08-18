@@ -7,8 +7,6 @@ namespace GangyiWang
 {
     public class Kernel
     {
-        private readonly Mat _image;
-
         private static readonly Point[] _directions =
         {
             new Point(-1, -1), new Point(0, -1), new Point(1, -1),
@@ -17,31 +15,28 @@ namespace GangyiWang
             new Point(-1, 0),
         };
 
+        private readonly Mat _image;
         private bool[] _kernelData;
 
         public Kernel(Mat image)
-        {
-            _image = image;
-        }
+            => _image = image;
+        
 
-        public void GetKernel(Point pos)
-        {
-            var kernel = new List<bool>();
-            foreach (var direction in _directions)
-                kernel.Add(IsValid(pos+direction) &&
-                           _image.At<byte>(pos.Y + direction.Y, pos.X + direction.X) > 0);
-            _kernelData = kernel.ToArray();
-        }
+        public void InitializeAt(Point pos)
+            => _kernelData = _directions.Select(direction => IsValid(pos + direction) &&
+                                                             IsPosActive(pos + direction)).ToArray();
+        
+        private bool IsPosActive(Point pos)
+            => _image.At<byte>(pos.Y, pos.X) > 0;
+        
 
         public IEnumerable<Point> AllActiveKernelPositions
         {
             get
             {
                 for (int i = 0; i < _kernelData.Length; i++)
-                {
-                    if (!_kernelData[i]) continue;
-                    yield return _directions[i];
-                }
+                    if (_kernelData[i])
+                        yield return _directions[i];
             }
         }
 
