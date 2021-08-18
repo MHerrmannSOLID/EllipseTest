@@ -7,10 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GangyiWang", "GangyiWang\Ga
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestImages", "TestImages", "{8C035D16-0AC1-4CF2-BDA0-256412CAA49B}"
 	ProjectSection(SolutionItems) = preProject
+		TestImages\rivets.png = TestImages\rivets.png
+		TestImages\seats.jpg = TestImages\seats.jpg
+		TestImages\simple.jpg = TestImages\simple.jpg
 		TestImages\TassenTest.png = TestImages\TassenTest.png
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageThinning", "ImageThinning\ImageThinning.csproj", "{D1864151-CBE1-4F3A-8CD2-50BE191E85AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageThinning", "ImageThinning\ImageThinning.csproj", "{D1864151-CBE1-4F3A-8CD2-50BE191E85AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
