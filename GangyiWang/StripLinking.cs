@@ -8,53 +8,58 @@ namespace GangyiWang
     public class StripLinking
     {
         private static readonly Random _rnd = new Random();
-        private static readonly int _minStripLength = 5;
         private readonly Mat _contourImage;
 
-        public Point[][] Strips { get; private set; }
+        public List<Point[]> Strips { get; private set; } = new List<Point[]>();
 
-        public static StripLinking PerformOn(Mat contourImg)
+        public static StripLinking PerformOn(Mat contourImg, int minStripLength =5)
         {
-            var toReturn = new StripLinking(contourImg);
+            var toReturn = new StripLinking(contourImg) {MinStripLength = minStripLength};
             toReturn.ExtractStrips();
+            toReturn.ExtractLoops();
             return toReturn;
         }
 
-
         private StripLinking(Mat contourImg)
-        {
-            _contourImage = contourImg.Clone();
-        }
+            => _contourImage = contourImg.Clone();
+
+
+        public int MinStripLength { get; set; } = 5;
 
         private void ExtractStrips()
         {
-            var strips = new List<Point[]>();
-            _contourImage.ForEachPosition((pt) =>
+            _contourImage.ForEachPosition((actPos) =>
             {
-                if (IsInactivePosition(pt)) return;
+                if (IsInactivePosition(actPos)) return;
+                var kernel = _contourImage.GetKernelAt(actPos);
+                if (IsIntermediatePos(kernel)) return;
 
-                var kernel = _contourImage.GetKernelAt(pt);
-
-                if (kernel.CountNeighbors() == 2) return;
-
-                RemovePixelAt(pt);
+                RemovePixelAt(actPos);
                 foreach (var direction in kernel.AllActiveKernelPositions)
                 {
-                    var strip = FollowStrip(new List<Point> {pt}, pt + direction).ToArray();
-                    if (strip.Length > _minStripLength)
-                        strips.Add(strip);
+                    var strip = FollowStrip(new List<Point> {actPos}, actPos + direction).ToArray();
+                    if (strip.Length > MinStripLength)
+                        Strips.Add(strip);
                 }
             });
-            Strips = strips.ToArray();
         }
 
-        private void RemovePixelAt(Point pt)
-            => _contourImage.At<byte>(pt.Y, pt.X) = 0;
+        private void ExtractLoops()
+        {
+            _contourImage.ForEachPosition((actPos) =>
+            {
+                if (IsInactivePosition(actPos)) return;
+                var kernel = _contourImage.GetKernelAt(actPos);
 
-
-        private bool IsInactivePosition(Point pt)
-            => _contourImage.At<byte>(pt.Y, pt.X) == 0;
-
+                RemovePixelAt(actPos);
+                foreach (var direction in kernel.AllActiveKernelPositions)
+                {
+                    var strip = FollowStrip(new List<Point> { actPos }, actPos + direction).ToArray();
+                    if (strip.Length > MinStripLength)
+                        Strips.Add(strip);
+                }
+            });
+        }
 
         private List<Point> FollowStrip(List<Point> actStripPoints, Point actPoint)
         {
@@ -66,6 +71,15 @@ namespace GangyiWang
                 ? actStripPoints
                 : FollowStrip(actStripPoints, actPoint + kernel.FirstActiveDirection);
         }
+
+        private static bool IsIntermediatePos(Kernel kernel)
+            => kernel.CountNeighbors() == 2;
+
+        private void RemovePixelAt(Point pt)
+            => _contourImage.At<byte>(pt.Y, pt.X) = 0;
+
+        private bool IsInactivePosition(Point pt)
+            => _contourImage.At<byte>(pt.Y, pt.X) == 0;
 
         public Mat CreateColoredStripsImage()
         {
