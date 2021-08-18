@@ -16,7 +16,7 @@ namespace GangyiWang
         {
             var toReturn = new StripLinking(contourImg) {MinStripLength = minStripLength};
             toReturn.ExtractStrips();
-            toReturn.ExtractLoops();
+            toReturn.ExtractStrips(true);
             return toReturn;
         }
 
@@ -26,39 +26,30 @@ namespace GangyiWang
 
         public int MinStripLength { get; set; } = 5;
 
-        private void ExtractStrips()
-        {
-            _contourImage.ForEachPosition((actPos) =>
+        private void ExtractStrips(bool isLoop = false)
+            => _contourImage.ForEachPosition((actPos) =>
             {
                 if (IsInactivePosition(actPos)) return;
                 var kernel = _contourImage.GetKernelAt(actPos);
-                if (IsIntermediatePos(kernel)) return;
-
-                RemovePixelAt(actPos);
-                foreach (var direction in kernel.AllActiveKernelPositions)
-                {
-                    var strip = FollowStrip(new List<Point> {actPos}, actPos + direction).ToArray();
-                    if (strip.Length > MinStripLength)
-                        Strips.Add(strip);
-                }
+                if (!IsValidStartPosition(isLoop, kernel)) return;
+                Strips.AddRange(ExtractStripsFromPosition(actPos, kernel));
             });
-        }
+        
+        private static bool IsValidStartPosition(bool isLoop, Kernel kernel)
+            => (isLoop || !IsIntermediatePos(kernel));
+        
 
-        private void ExtractLoops()
+        private IEnumerable<Point[]> ExtractStripsFromPosition(Point actPos, Kernel kernel)
         {
-            _contourImage.ForEachPosition((actPos) =>
+            var stripPoints = new List<Point[]>();
+            RemovePixelAt(actPos);
+            foreach (var direction in kernel.AllActiveKernelPositions)
             {
-                if (IsInactivePosition(actPos)) return;
-                var kernel = _contourImage.GetKernelAt(actPos);
-
-                RemovePixelAt(actPos);
-                foreach (var direction in kernel.AllActiveKernelPositions)
-                {
-                    var strip = FollowStrip(new List<Point> { actPos }, actPos + direction).ToArray();
-                    if (strip.Length > MinStripLength)
-                        Strips.Add(strip);
-                }
-            });
+                var strip = FollowStrip(new List<Point> {actPos}, actPos + direction).ToArray();
+                if (strip.Length > MinStripLength)
+                    stripPoints.Add(strip);
+            }
+            return stripPoints;
         }
 
         private List<Point> FollowStrip(List<Point> actStripPoints, Point actPoint)
