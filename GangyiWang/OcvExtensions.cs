@@ -18,7 +18,7 @@ namespace GangyiWang
         public static Kernel GetKernelAt(this Mat image, Point position)
         {
             var kernel = new Kernel(image);
-            kernel.GetKernel(position.Y, position.X);
+            kernel.GetKernel(position);
             return kernel;
         }
     }

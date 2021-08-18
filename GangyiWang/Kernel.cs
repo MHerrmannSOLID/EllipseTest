@@ -9,7 +9,6 @@ namespace GangyiWang
     {
         private readonly Mat _image;
 
-
         private static readonly Point[] _directions =
         {
             new Point(-1, -1), new Point(0, -1), new Point(1, -1),
@@ -25,12 +24,12 @@ namespace GangyiWang
             _image = image;
         }
 
-        public void GetKernel(int y, int x)
+        public void GetKernel(Point pos)
         {
             var kernel = new List<bool>();
             foreach (var direction in _directions)
-                kernel.Add(IsValid(y + direction.Y, x + direction.X) &&
-                           _image.At<byte>(y + direction.Y, x + direction.X) > 0);
+                kernel.Add(IsValid(pos+direction) &&
+                           _image.At<byte>(pos.Y + direction.Y, pos.X + direction.X) > 0);
             _kernelData = kernel.ToArray();
         }
 
@@ -57,8 +56,8 @@ namespace GangyiWang
             }
         }
 
-        private bool IsValid(int y, int x)
-            => (x >= 0 && x < _image.Width) && (y >= 0 && y < _image.Height);
+        private bool IsValid(Point pt)
+            => (pt.X >= 0 && pt.X < _image.Width) && (pt.Y >= 0 && pt.Y < _image.Height);
 
         public int CountNeighbors()
             => _kernelData.Aggregate(0, (ctr, val) => ctr += val ? 1 : 0);

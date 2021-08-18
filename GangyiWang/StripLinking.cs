@@ -78,14 +78,15 @@ namespace GangyiWang
 
         private void DrawStrip(Point[] strip, Mat stripImage)
         {
+            var color = GetRandomColor();
             for (int j = 0; j < strip.Length; j++)
-                stripImage.At<Vec3b>(strip[j].Y, strip[j].X) = GetRandomColor();
+                stripImage.At<Vec3b>(strip[j].Y, strip[j].X) = color;
         }
 
         private  Vec3b GetRandomColor()
             => new Vec3b
             {
-                Item0 = (byte) _rnd.Next(0, 256), Item1 = (byte) _rnd.Next(0, 256), Item2 = (byte) _rnd.Next(0, 256)
+                Item0 = (byte) _rnd.Next(0, 255), Item1 = (byte) _rnd.Next(0, 255), Item2 = (byte) _rnd.Next(0, 255)
             };
     }
 }
